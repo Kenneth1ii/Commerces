@@ -11,4 +11,5 @@ class AuctionBids(models.Model):
     pass
 
 class AuctionComment(models.Model):
-    pass
+    models.
+
