@@ -5,11 +5,11 @@ class User(AbstractUser):
     pass
 
 class AuctionListing(models.Model):
-    pass
+    title = models.CharField(max_length=64)
+    description = models.TextField()
 
 class AuctionBids(models.Model):
-    pass
+    CurrentBid = models.IntegerField()
 
 class AuctionComment(models.Model):
-    models.
-
+    comment = models.CharField(max_length=255)
