@@ -67,4 +67,6 @@ def auction_list(request, id):
     return render(request, "auctions/newlisting.html", {
         "listing": AuctionListing.objects.get(pk=id),
     })
-        
+
+def create_list(request, id):
+    pass
