@@ -68,5 +68,10 @@ def auction_list(request, id):
         "listing": AuctionListing.objects.get(pk=id),
     })
 
-def create_list(request, id):
-    pass
+def create_list(request):
+    if request.method == "POST":
+        b = AuctionListing(title=request.POST['title'], description = request.POST['description'])
+        b.save()
+        return HttpResponseRedirect(reverse('auctionlist', args=(b.id,) ))
+    
+    return render(request, "auctions/createlisting.html")
