@@ -4,21 +4,17 @@ from django.db import models
 class User(AbstractUser):
     pass
 
-class AuctionCategory(models.Model):
-    pass
-
 class AuctionListing(models.Model):
-    test = (
-        ('Books', 'Books'),
-        ('Video Games','Video Games'),
-        ('Trading Cards','Trading Cards'),
-        ('Others','Others'),
-    )
-
     title = models.CharField(max_length=64)
     description = models.TextField()
     image = models.TextField()
-    Categories = models.CharField(max_length=64, choices=test, default = 'Video Games' )#should be foreignkey instead
+
+Categorylist = ['Books','Electronics','Trading Cards','Video Games','Other']
+
+class AuctionCategory(models.Model):
+    category = models.CharField(max_length=255)
+    auctionlist = models.ManyToManyField(AuctionListing,related_name="category")
+
 
 class AuctionBids(models.Model):
     CurrentBid = models.IntegerField()
