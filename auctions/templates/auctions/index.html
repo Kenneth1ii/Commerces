@@ -2,6 +2,12 @@
 
 {% block body %}
     <h2>Active Listings</h2>
-
+    {%for auctions in auctionlisting%}
+        <h5>{{auctions.title}}</h5>
+        {% if auctions.image %} <!--cant use filter because doesn't have access to Models, Auctionlisting.objects-->
+            <img src="{{auctions.image}}" height="250px" width="160px">
+        {% endif %}
+        <p>{{auctions.description}}</p>
+    {% endfor %}
     TODO
 {% endblock %}

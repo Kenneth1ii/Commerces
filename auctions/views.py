@@ -8,7 +8,9 @@ from .models import *
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    return render(request, "auctions/index.html",{
+        'auctionlisting': AuctionListing.objects.all()
+    })
 
 
 def login_view(request):
@@ -75,7 +77,9 @@ def create_list(request):
         b = AuctionListing(title=request.POST['title'], description = request.POST['description'],image = request.POST['image'])
         b.save()
         a.auctionlist.add(b)
-
+        c = Auctionbids(request.POST['bid'])
+        c.save()
+        
         return HttpResponseRedirect(reverse('auctionlist', args=(b.id,) ))
     
     return render(request, "auctions/createlisting.html",{
