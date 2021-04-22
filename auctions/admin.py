@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import * # User from model.py class
 
 class FlightAdmin(admin.ModelAdmin):
-    list_display = ('id','title','description','image','category')
+    list_display = ('title','description','image','comments','bid')
 
 class PassengerAdmin(admin.ModelAdmin):
     filter_horizontal = ("auctionlist",)
