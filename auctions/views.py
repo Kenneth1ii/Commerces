@@ -74,11 +74,12 @@ def create_list(request):
     if request.method == "POST":
         a = AuctionCategory(category = request.POST['category'])
         a.save()
-        b = AuctionListing(title=request.POST['title'], description = request.POST['description'],image = request.POST['image'])
-        b.save()
-        a.auctionlist.add(b)
         c = Auctionbids(request.POST['bid'])
         c.save()
+        b = AuctionListing(title=request.POST['title'], description = request.POST['description'],image = request.POST['image'],bid= c,)
+        b.save()
+        a.auctionlist.add(b)
+        
         
         return HttpResponseRedirect(reverse('auctionlist', args=(b.id,) ))
     

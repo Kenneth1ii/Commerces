@@ -5,10 +5,10 @@ class User(AbstractUser):
     pass
 
 class AuctionBids(models.Model):
-    CurrentBid = models.IntegerField()
-
+    currentBid = models.IntegerField()
+    
     def __str__(self):
-        return f"current bid price: {self.CurrentBid}"
+        return f"current bid price: {self.currentBid}"
 
 
 class AuctionComment(models.Model):
