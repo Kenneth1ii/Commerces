@@ -15,7 +15,7 @@ class AuctionComment(models.Model):
     comment = models.CharField(max_length=255)
 
     def __str__(self):
-        return f"{self.comment} , id:{self.id}"
+        return f"{self.comment}"
 
 
 class AuctionListing(models.Model):
