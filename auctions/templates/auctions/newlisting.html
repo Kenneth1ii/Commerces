@@ -8,9 +8,9 @@
         <h1>{{listing.title}}</h1>
         <img src={{listing.image}} height="300px" width="200px">
         <!--message-->
-        <form action="">
+        <form action="{% url 'auctionlist' listing.id %}" method="POST">
             <strong>{{listing.bid}}</strong>
-            <input type="number">
+            <input type="number" name="current">
             <input type="submit" value="Place Bid">
         </form>
         <p>{{listing.description}}</p>
