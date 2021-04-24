@@ -66,8 +66,23 @@ def register(request):
 
 
 def auction_list(request, id):
-    return render(request, "auctions/newlisting.html", {
-        "listing": AuctionListing.objects.get(pk=id),
+    listing = AuctionListing.objects.get(pk=id)
+    if request.method == "POST":
+        a = int(request.POST["current"])
+        if a <= listing.bid.currentBid:
+            return render(request, 'auctions/auctionlist.html',{
+                "listing": listing,
+                "message": 'Your Current bid does not meet the minimum'
+            })
+        else:
+            listing.bid.currentBid = a
+            listing.bid.save() # save foreign key reference first.
+            return render(request, "auctions/auctionlist.html", {
+            "listing": listing,
+            })
+
+    return render(request, "auctions/auctionlist.html", {
+        "listing": listing,
     })
 
 def create_list(request):

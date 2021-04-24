@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <title>Document</title>
+</head>
+<body>
+
+
+    <form action="{% url 'createlist' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <input class="form-control" autofocus type="text" name="title" placeholder="Title">
+        </div>
+        <div class="form-group">
+            <input class="form-control" autofocus type="text" name="image" placeholder="ImageUrl">
+        </div>
+        <div class="form-group">
+            <textarea class="form-control" name="description" rows="3" placeholder="Description"></textarea>
+        </div>
+        <div class="form-group">
+            <input class="form-control" autofocus type="text" name="bid" placeholder="Bid Amount">
+        </div>
+
+        <select name="category">
+            {% for categories in Categories %}
+                <option value="{{categories}}">{{categories}}</option>
+            {% endfor %}
+        </select>
+
+        <input class="btn btn-primary" type="submit">
+    </form>
+
+
+</body>
+</html>

@@ -7,8 +7,11 @@
         <a href="{% url 'index' %}">Home</a>
         <h1>{{listing.title}}</h1>
         <img src={{listing.image}} height="300px" width="200px">
-        <!--message-->
+        {% if message %}
+        <h3>{{message}}</h3>
+        {% endif %}
         <form action="{% url 'auctionlist' listing.id %}" method="POST">
+            {% csrf_token %}
             <strong>{{listing.bid}}</strong>
             <input type="number" name="current">
             <input type="submit" value="Place Bid">
