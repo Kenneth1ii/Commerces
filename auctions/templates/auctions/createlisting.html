@@ -13,7 +13,7 @@
     <form action="{% url 'createlist' %}" method="post">
         {% csrf_token %}
         <div class="form-group">
-            <input class="form-control" autofocus type="text" name="title" placeholder="Title">
+            <input class="form-control" autofocus type="text" name="title" placeholder="Title" required>
         </div>
         <div class="form-group">
             <input class="form-control" autofocus type="text" name="image" placeholder="ImageUrl">
@@ -22,7 +22,7 @@
             <textarea class="form-control" name="description" rows="3" placeholder="Description"></textarea>
         </div>
         <div class="form-group">
-            <input class="form-control" autofocus type="text" name="bid" placeholder="Bid Amount">
+            <input class="form-control" autofocus type="number" name="bid" placeholder="Bid Amount" required>
         </div>
 
         <select name="category">

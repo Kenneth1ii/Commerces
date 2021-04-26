@@ -26,7 +26,7 @@ class AuctionListing(models.Model):
     comments = models.ForeignKey(AuctionComment, on_delete=models.CASCADE, related_name="auctioncomment", null=True) 
     # Make nullable == null=true b/c we already created objects data before hand before we created bid/comment foreign keys ,
     # therefore we ran into constraint issues of default and nonnulliable
-    watching = models.ForeignKey(AuctionWatch,on_delete=models.CASCADE,related_name="auctionwatch",null=True)
+    watch = models.ForeignKey(AuctionWatch,on_delete=models.CASCADE,related_name="auctionwatch",null=True)
 
     def __str__(self):
         return self.title

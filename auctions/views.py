@@ -67,8 +67,31 @@ def register(request):
 
 def auction_list(request, id):
     listing = AuctionListing.objects.get(pk=id)
+    try:
+        if listing.watch.watching.userwatch.id:
+            watchstatus = "Watching"
+            watching = True
+    except AttributeError:
+        watchstatus = "Add to Watchlist"
+        watching = False
+
     if request.method == "POST":
-        
+
+        if request.POST["addwatch"]:
+            if watching:
+                User.userwatchlist.remove(listing.watch)
+                return render(request, "auctions/auctionlist.html", {
+                    "listing": listing,
+                    "watchstatus": watchstatus
+                })              
+
+                listing.watch.watching = True
+                return render(request, "auctions/auctionlist.html", {
+                    "listing": listing,
+                    "watchstatus": watchstatus
+                })                
+
+
         if request.POST["current"]:
             a = int(request.POST["current"])
             if a <= listing.bid.currentBid:
@@ -85,15 +108,18 @@ def auction_list(request, id):
 
     return render(request, "auctions/auctionlist.html", {
         "listing": listing,
+        "watchstatus": watchstatus
     })
 
 def create_list(request):
     if request.method == "POST":
         a = AuctionCategory(category = request.POST['category'])
         a.save()
-        c = Auctionbids(request.POST['bid'])
+        c = AuctionBids(currentBid = request.POST['bid'])
         c.save()
-        b = AuctionListing(title=request.POST['title'], description = request.POST['description'],image = request.POST['image'],bid= c,)
+        d = AuctionWatch()
+        d.save()
+        b = AuctionListing(title=request.POST['title'], description = request.POST['description'],image = request.POST['image'],bid= c,watch=d)
         b.save()
         a.auctionlist.add(b)
         
