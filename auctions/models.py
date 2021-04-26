@@ -1,8 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-class User(AbstractUser):
-    pass
 
 class AuctionBids(models.Model):
     currentBid = models.IntegerField()
@@ -16,7 +14,9 @@ class AuctionComment(models.Model):
 
     def __str__(self):
         return f"{self.comment}"
-
+    
+class AuctionWatch(models.Model):
+    watching = models.BooleanField(default=False)
 
 class AuctionListing(models.Model):
     title = models.CharField(max_length=64)
@@ -25,16 +25,24 @@ class AuctionListing(models.Model):
     bid = models.ForeignKey(AuctionBids, on_delete=models.CASCADE, related_name="auctionbidding", null=True)
     comments = models.ForeignKey(AuctionComment, on_delete=models.CASCADE, related_name="auctioncomment", null=True) 
     # Make nullable == null=true b/c we already created objects data before hand before we created bid/comment foreign keys ,
-    # therefore we ran into constraint issues of default and nonnulliable.
+    # therefore we ran into constraint issues of default and nonnulliable
+    watching = models.ForeignKey(AuctionWatch,on_delete=models.CASCADE,related_name="auctionwatch",null=True)
 
     def __str__(self):
         return self.title
 
-Categorylist = ['Books','Electronics','Trading Cards','Video Games','Other']
+class User(AbstractUser,models.Model):
+    userwatchlist = models.ManyToManyField(AuctionWatch, related_name="userwatch")
+    usercommentlist = models.ManyToManyField(AuctionComment,related_name="usercomment")
 
+
+
+Categorylist = ['Books','Electronics','Trading Cards','Video Games','Other']
 class AuctionCategory(models.Model):
     category = models.CharField(max_length=255)
     auctionlist = models.ManyToManyField(AuctionListing,related_name="category")
 
     def __str__(self):
         return f"{self.category}"
+
+
