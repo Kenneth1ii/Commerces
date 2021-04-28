@@ -67,48 +67,54 @@ def register(request):
 
 def auction_list(request, id):
     listing = AuctionListing.objects.get(pk=id)
-    try:
-        if listing.watch.watching.userwatch.id:
-            watchstatus = "Watching"
-            watching = True
-    except AttributeError:
-        watchstatus = "Add to Watchlist"
+    userid = request.user.id
+    user = User.objects.get(id=userid)
+
+    if AuctionListing.objects.filter(userwatch__id=userid):
+        watchstatus = 'Watching'
+        watching = True
+    else: 
+        watchstatus = 'Add To Watchlist'
         watching = False
 
-    if request.method == "POST":
-
-        if request.POST["addwatch"]:
+    
+    if request.method == 'POST':
+        if request.POST.get('addwatch', False):
             if watching:
-                User.userwatchlist.remove(listing.watch)
+                user.userwatchlist.remove(listing)
+                watchstatus = 'Add To Watchlist'
                 return render(request, "auctions/auctionlist.html", {
                     "listing": listing,
-                    "watchstatus": watchstatus
-                })              
-
-                listing.watch.watching = True
-                return render(request, "auctions/auctionlist.html", {
-                    "listing": listing,
-                    "watchstatus": watchstatus
+                    'watchstatus': watchstatus
                 })                
+            else:
+                user.userwatchlist.add(listing)
+                watchstatus = 'Watching'
+                return render(request, "auctions/auctionlist.html", {
+                    "listing": listing,
+                    'watchstatus': watchstatus
+                })          
 
 
-        if request.POST["current"]:
+        if request.POST.get('current',False):
             a = int(request.POST["current"])
             if a <= listing.bid.currentBid:
                 return render(request, 'auctions/auctionlist.html',{
                     "listing": listing,
-                    "message": 'Your Current bid does not meet the minimum'
+                    "message": 'Your Current bid does not meet the minimum',
+                    'watchstatus': watchstatus,
                 })
             else:
                 listing.bid.currentBid = a
                 listing.bid.save() # save foreign key reference first.
                 return render(request, "auctions/auctionlist.html", {
                 "listing": listing,
+                'watchstatus': watchstatus,
                 })
 
     return render(request, "auctions/auctionlist.html", {
         "listing": listing,
-        "watchstatus": watchstatus
+        'watchstatus': watchstatus
     })
 
 def create_list(request):
@@ -117,9 +123,7 @@ def create_list(request):
         a.save()
         c = AuctionBids(currentBid = request.POST['bid'])
         c.save()
-        d = AuctionWatch()
-        d.save()
-        b = AuctionListing(title=request.POST['title'], description = request.POST['description'],image = request.POST['image'],bid= c,watch=d)
+        b = AuctionListing(title=request.POST['title'], description = request.POST['description'],image = request.POST['image'],bid= c)
         b.save()
         a.auctionlist.add(b)
         

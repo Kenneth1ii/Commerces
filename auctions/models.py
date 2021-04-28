@@ -14,9 +14,6 @@ class AuctionComment(models.Model):
 
     def __str__(self):
         return f"{self.comment}"
-    
-class AuctionWatch(models.Model):
-    watching = models.BooleanField(default=False)
 
 class AuctionListing(models.Model):
     title = models.CharField(max_length=64)
@@ -26,14 +23,13 @@ class AuctionListing(models.Model):
     comments = models.ForeignKey(AuctionComment, on_delete=models.CASCADE, related_name="auctioncomment", null=True) 
     # Make nullable == null=true b/c we already created objects data before hand before we created bid/comment foreign keys ,
     # therefore we ran into constraint issues of default and nonnulliable
-    watch = models.ForeignKey(AuctionWatch,on_delete=models.CASCADE,related_name="auctionwatch",null=True)
 
     def __str__(self):
         return self.title
 
 class User(AbstractUser,models.Model):
-    userwatchlist = models.ManyToManyField(AuctionWatch, related_name="userwatch")
-    usercommentlist = models.ManyToManyField(AuctionComment,related_name="usercomment")
+    userwatchlist = models.ManyToManyField(AuctionListing, related_name="userwatch", blank=True)
+    usercommentlist = models.ManyToManyField(AuctionComment,related_name="usercomment", blank=True )
 
 
 

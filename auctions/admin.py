@@ -8,10 +8,11 @@ class PassengerAdmin(admin.ModelAdmin):
     filter_horizontal = ("auctionlist",)
 # Register your models here.
 
+class UserDisplay(admin.ModelAdmin):
+    filter_horizontal = ('userwatchlist', 'usercommentlist')
 
-admin.site.register(User)
+admin.site.register(User,UserDisplay)
 admin.site.register(AuctionListing,FlightAdmin)
 admin.site.register(AuctionBids)
 admin.site.register(AuctionCategory,PassengerAdmin)
 admin.site.register(AuctionComment)
-admin.site.register(AuctionWatch)
