@@ -70,13 +70,11 @@ def auction_list(request, id):
     userid = request.user.id
     user = User.objects.get(id=userid)
 
-    if AuctionListing.objects.filter(userwatch__id=userid):
+    watching = bool(AuctionListing.objects.filter(userwatch__id=userid))
+    if watching:
         watchstatus = 'Watching'
-        watching = True
-    else: 
+    else:
         watchstatus = 'Add To Watchlist'
-        watching = False
-
     
     if request.method == 'POST':
         if request.POST.get('addwatch', False):
