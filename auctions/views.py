@@ -90,7 +90,7 @@ def auction_list(request, id):
                 })                
             else:
                 user.userwatchlist.add(listing)
-                watching = False
+                watching = True
                 return render(request, "auctions/auctionlist.html", {
                     "listing": listing,
                     'watchstatus': test()
