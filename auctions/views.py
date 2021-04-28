@@ -71,26 +71,29 @@ def auction_list(request, id):
     user = User.objects.get(id=userid)
 
     watching = bool(AuctionListing.objects.filter(userwatch__id=userid))
-    if watching:
-        watchstatus = 'Watching'
-    else:
-        watchstatus = 'Add To Watchlist'
+
+    def test():
+        if watching:
+            return 'Watching'
+        else:
+            return 'Add To Watchlist'
+    test()
     
     if request.method == 'POST':
         if request.POST.get('addwatch', False):
             if watching:
+                watching = False
                 user.userwatchlist.remove(listing)
-                watchstatus = 'Add To Watchlist'
                 return render(request, "auctions/auctionlist.html", {
                     "listing": listing,
-                    'watchstatus': watchstatus
+                    'watchstatus': test()
                 })                
             else:
                 user.userwatchlist.add(listing)
-                watchstatus = 'Watching'
+                watching = False
                 return render(request, "auctions/auctionlist.html", {
                     "listing": listing,
-                    'watchstatus': watchstatus
+                    'watchstatus': test()
                 })          
 
 
@@ -100,19 +103,19 @@ def auction_list(request, id):
                 return render(request, 'auctions/auctionlist.html',{
                     "listing": listing,
                     "message": 'Your Current bid does not meet the minimum',
-                    'watchstatus': watchstatus,
+                    'watchstatus': test(),
                 })
             else:
                 listing.bid.currentBid = a
                 listing.bid.save() # save foreign key reference first.
                 return render(request, "auctions/auctionlist.html", {
                 "listing": listing,
-                'watchstatus': watchstatus,
+                'watchstatus': test(),
                 })
 
     return render(request, "auctions/auctionlist.html", {
         "listing": listing,
-        'watchstatus': watchstatus
+        'watchstatus': test()
     })
 
 def create_list(request):
