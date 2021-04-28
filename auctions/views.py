@@ -70,7 +70,8 @@ def auction_list(request, id):
     userid = request.user.id
     user = User.objects.get(id=userid)
 
-    watching = bool(AuctionListing.objects.filter(userwatch__id=userid))
+    watching = bool(User.objects.filter(userwatchlist__id=id))
+    print(watching)
 
     def test():
         if watching:
@@ -93,9 +94,8 @@ def auction_list(request, id):
                 watching = True
                 return render(request, "auctions/auctionlist.html", {
                     "listing": listing,
-                    'watchstatus': test()
+                    'watchstatus': test(),
                 })          
-
 
         if request.POST.get('current',False):
             a = int(request.POST["current"])
@@ -117,6 +117,7 @@ def auction_list(request, id):
         "listing": listing,
         'watchstatus': test()
     })
+
 
 def create_list(request):
     if request.method == "POST":
