@@ -100,6 +100,7 @@ def auction_list(request, id):
         if request.POST.get('current',False):
             a = int(request.POST["current"])
             if a <= listing.bid.currentBid:
+                listing.bid.currentbiduserid = userid
                 return render(request, 'auctions/auctionlist.html',{
                     "listing": listing,
                     "message": 'Your Current bid does not meet the minimum',
@@ -140,4 +141,13 @@ def create_list(request):
     
     return render(request, "auctions/createlisting.html",{
         'Categories': Categorylist,
+    })
+
+def watchlist(request):
+    userid = request.user.id
+    user = User.objects.get(id=userid)
+    userwatchlist = user.userwatchlist.all()
+
+    return render(request,'auctions/watchlist.html',{
+        'userwatchlist': userwatchlist
     })

@@ -2,12 +2,12 @@ from django.contrib import admin
 from .models import * # User from model.py class
 
 class FlightAdmin(admin.ModelAdmin):
-    list_display = ('title','description','image','comments','bid')
+    list_display = ('title','description','image','bid')
 
 # Register your models here.
 
 class UserDisplay(admin.ModelAdmin):
-    filter_horizontal = ('userwatchlist', 'usercommentlist')
+    filter_horizontal = ('userwatchlist',)
 
 admin.site.register(User,UserDisplay)
 admin.site.register(AuctionListing,FlightAdmin)
