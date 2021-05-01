@@ -3,13 +3,14 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 from .models import *
 
-
+@login_required
 def index(request):
     return render(request, "auctions/index.html",{
-        'auctionlisting': AuctionListing.objects.all()
+        'auctionlisting': AuctionListing.objects.all().exclude(closed=True)
     })
 
 
@@ -89,7 +90,8 @@ def auction_list(request, id):
                 user.userwatchlist.remove(listing)
                 return render(request, "auctions/auctionlist.html", {
                     "listing": listing,
-                    'watchstatus': test()
+                    'watchstatus': test(),
+                    'commentlist': listing.comments.all()
                 })                
             else:
                 user.userwatchlist.add(listing)
@@ -97,6 +99,7 @@ def auction_list(request, id):
                 return render(request, "auctions/auctionlist.html", {
                     "listing": listing,
                     'watchstatus': test(),
+                    'commentlist': listing.comments.all()
                 })          
 
         if request.POST.get('current',False):
@@ -106,6 +109,7 @@ def auction_list(request, id):
                     "listing": listing,
                     "message": 'Your Current bid does not meet the minimum',
                     'watchstatus': test(),
+                    'commentlist': listing.comments.all()
                 })
             else:
                 listing.bid.currentBid = a
@@ -114,19 +118,26 @@ def auction_list(request, id):
                 return render(request, "auctions/auctionlist.html", {
                 "listing": listing,
                 'watchstatus': test(),
+                'commentlist': listing.comments.all()
                 })
 
         if request.POST.get('endlisting',False):
-            winnerid = listing.bid.currentuserbid.id
-            listing.bought = User.objects.get(id=winnerid)
-            listing.sold = User.objects.get(id=listing.owner.id)
+            winner = listing.bid.currentuserbid
+            listing.userbought = winner
+            listing.usersold = listing.owner
             listing.closed = True
             listing.save()
-            
-    print(listing.bid.currentuserbid.id)
+
+        if request.POST.get('comment',False):
+            newComment = AuctionComment(comment=request.POST['comment'], auctioncomments = listing, usercommentlist=request.user)
+            newComment.save()    
+
+    
+    comment = AuctionComment.objects.filter(auctioncomments=listing)
     return render(request, "auctions/auctionlist.html", {
         "listing": listing,
-        'watchstatus': test()
+        'watchstatus': test(),
+        'commentlist': AuctionComment.objects.filter(auctioncomments=listing)
     })
 
 

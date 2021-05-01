@@ -36,14 +36,14 @@ class AuctionListing(models.Model):
 
 class AuctionComment(models.Model):
     comment = models.CharField(max_length=255)
-    auctioncomments = models.ForeignKey(AuctionListing, on_delete=models.CASCADE, related_name="comment",null=True)
+    auctioncomments = models.ForeignKey(AuctionListing, on_delete=models.CASCADE, related_name="comments",null=True)
+    usercommentlist = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE, related_name="commenter",null=True) 
 
     def __str__(self):
         return f"{self.comment}"
 
 class User(AbstractUser,models.Model):
     userwatchlist = models.ManyToManyField(AuctionListing, related_name="userwatch", blank=True)
-    usercommentlist = models.ForeignKey(AuctionComment,related_name="usercomment", null=True, on_delete=models.CASCADE,blank=True) 
     
     #Instead of referring to User directly, you should reference the user model using django.contrib.auth.get_user_model(). 
     #This method will return the currently active user model – the custom user model if one is specified, or User otherwise.

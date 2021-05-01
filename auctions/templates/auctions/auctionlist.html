@@ -4,7 +4,7 @@
         <title>{{listing.title}}</title>
     </head>
     <body>
-        {%if not listing.closed %}
+        {%if not listing.closed  %}
             <a href="{% url 'index' %}">Home</a>
             <h1>{{listing.title}}</h1>
             <img src={{listing.image}} height="300px" width="200px">
@@ -19,14 +19,24 @@
                 <br>
                 <button name="addwatch" value=1>{{watchstatus}}</button>
             </form>
-            <p>{{listing.description}}</p>
-
+            <p>Description: {{listing.description}}</p>
+            <p>Seller: <a href="#">{{listing.owner}}</a></p>
             {% if listing.owner.id == request.user.id %}
-            <form action="{% url 'auctionlist' listing.id %}" method="POST">
-                {% csrf_token %}
-            <button name="endlisting" value=1>End Listing</button>
-            </form>
+                <form action="{% url 'auctionlist' listing.id %}" method="POST">
+                    {% csrf_token %}
+                <button name="endlisting" value=1>End Listing</button>
+                </form>
             {% endif %}
+            <h3>Comments</h3>
+            {% for comments in commentlist %}
+                <hr>
+                <p>{{ comments }} by {{ comments.usercommentlist }}</p>
+            {% endfor %}
+        <form action="{% url 'auctionlist' listing.id %}" method="POST">
+            {% csrf_token %}
+            <textarea name="comment" rows="5" cols="60" maxlength="255"></textarea>
+            <input type="submit" value="Comment">
+        </form>
         {% endif %}
 
         {% if listing.closed %}
