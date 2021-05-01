@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout 
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -70,6 +70,7 @@ def auction_list(request, id):
     userid = request.user.id
     user = User.objects.get(id=userid)
 
+    
     watching = bool(User.objects.filter(userwatchlist__id=id))
     print(watching)
 
@@ -79,6 +80,7 @@ def auction_list(request, id):
         else:
             return 'Add To Watchlist'
     test()
+
     
     if request.method == 'POST':
         if request.POST.get('addwatch', False):
@@ -100,7 +102,6 @@ def auction_list(request, id):
         if request.POST.get('current',False):
             a = int(request.POST["current"])
             if a <= listing.bid.currentBid:
-                listing.bid.currentbiduserid = userid
                 return render(request, 'auctions/auctionlist.html',{
                     "listing": listing,
                     "message": 'Your Current bid does not meet the minimum',
@@ -108,12 +109,21 @@ def auction_list(request, id):
                 })
             else:
                 listing.bid.currentBid = a
+                listing.bid.currentuserbid = user
                 listing.bid.save() # save foreign key reference first.
                 return render(request, "auctions/auctionlist.html", {
                 "listing": listing,
                 'watchstatus': test(),
                 })
 
+        if request.POST.get('endlisting',False):
+            winnerid = listing.bid.currentuserbid.id
+            listing.bought = User.objects.get(id=winnerid)
+            listing.sold = User.objects.get(id=listing.owner.id)
+            listing.closed = True
+            listing.save()
+            
+    print(listing.bid.currentuserbid.id)
     return render(request, "auctions/auctionlist.html", {
         "listing": listing,
         'watchstatus': test()
@@ -135,6 +145,9 @@ def create_list(request):
             f = AuctionCategory(category=category)
             f.save()
             b.category = f
+        userid = request.user.id
+        user= User.objects.get(id=userid)
+        b.owner = user
         b.save()
         
         return HttpResponseRedirect(reverse('auctionlist', args=(b.id,) ))

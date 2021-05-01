@@ -4,20 +4,37 @@
         <title>{{listing.title}}</title>
     </head>
     <body>
-        <a href="{% url 'index' %}">Home</a>
+        {%if not listing.closed %}
+            <a href="{% url 'index' %}">Home</a>
+            <h1>{{listing.title}}</h1>
+            <img src={{listing.image}} height="300px" width="200px">
+            {% if message %}
+            <h3>{{message}}</h3>
+            {% endif %}
+            <form action="{% url 'auctionlist' listing.id %}" method="POST">
+                {% csrf_token %}
+                <strong>{{listing.bid}}</strong>
+                <input type="number" name="current">
+                <input type="submit" value="Place Bid">
+                <br>
+                <button name="addwatch" value=1>{{watchstatus}}</button>
+            </form>
+            <p>{{listing.description}}</p>
+
+            {% if listing.owner.id == request.user.id %}
+            <form action="{% url 'auctionlist' listing.id %}" method="POST">
+                {% csrf_token %}
+            <button name="endlisting" value=1>End Listing</button>
+            </form>
+            {% endif %}
+        {% endif %}
+
+        {% if listing.closed %}
+        <a href="{% url 'index' %}">Home</a>            
         <h1>{{listing.title}}</h1>
         <img src={{listing.image}} height="300px" width="200px">
-        {% if message %}
-        <h3>{{message}}</h3>
+        <h2>Listing was ended</h2>
+        <h3>Winner: {{listing.bid.currentuserbid}}</h3>
         {% endif %}
-        <form action="{% url 'auctionlist' listing.id %}" method="POST">
-            {% csrf_token %}
-            <strong>{{listing.bid}}</strong>
-            <input type="number" name="current">
-            <input type="submit" value="Place Bid">
-            <br>
-            <button name="addwatch" value=1>{{watchstatus}}</button>
-        </form>
-        <p>{{listing.description}}</p>
     </body>
 </html>
