@@ -71,9 +71,7 @@ def auction_list(request, id):
     userid = request.user.id
     user = User.objects.get(id=userid)
 
-    
-    watching = bool(User.objects.filter(userwatchlist__id=id))
-    print(watching)
+    watching = listing.userwatch.all().filter(id = userid).exists()
 
     def test():
         if watching:
