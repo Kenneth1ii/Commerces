@@ -173,3 +173,12 @@ def watchlist(request):
     return render(request,'auctions/watchlist.html',{
         'userwatchlist': userwatchlist
     })
+
+def purchase(request, id):
+    userid = request.user.id
+    user = User.objects.get(id=userid)
+    userpurchases  = user.auctionbought.all()
+
+    return render(request, 'auctions/purchase.html',{
+        'userpurchases': userpurchases
+    })

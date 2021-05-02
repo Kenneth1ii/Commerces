@@ -24,6 +24,9 @@
                 <li class="nav-item"> 
                     <a class="nav-link" href='{% url "watchlist" %}'> WatchList</a>
                 </li>
+                <li class="nav-item"> 
+                    <a class="nav-link" href="{% url 'purchase' request.user.id %}">Purchase History</a> <!-- Too lazy for CSS fix-->
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'createlist'%}">Create Listing</a>  <!-- Too lazy for CSS-->
                 </li>

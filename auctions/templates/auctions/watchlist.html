@@ -1,0 +1,14 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h3>Watch List</h3>
+    {%for auctions in userwatchlist %}
+        <a href="{% url 'auctionlist' auctions.id%}"><h5>{{auctions.title}}</h5></a>
+        {% if auctions.image %} <!--cant use filter because doesn't have access to Models, Auctionlisting.objects-->
+            <img src="{{auctions.image}}" height="250px" width="160px">
+        {% endif %}
+        <strong>{{auctions.bid}}</strong>
+        <p>{{auctions.description}}</p>
+        <hr>
+    {% endfor %}
+{% endblock %}
