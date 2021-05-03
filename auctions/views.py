@@ -91,15 +91,6 @@ def auction_list(request, id):
             return 'Add To Watchlist'
     test()
 
-    testrender = render(request, "auctions/auctionlist.html", {
-    "listing": listing,
-    'watchstatus': test(),
-    'commentlist': AuctionComment.objects.filter(auctioncomments=listing),
-    'days': days,
-    'seconds':seconds,
-    'hours': hours,
-    'minutes':minutes,
-    })
 
     if request.method == 'POST':
         if request.POST.get('addwatch', False):
@@ -110,12 +101,33 @@ def auction_list(request, id):
                 seconds = listing.auctiontimeremaining.seconds
                 hours = seconds//3600
                 minutes = (seconds//60)%60
-                seconds = seconds ((hours*3600)+(minutes*60))
-                return testrender      
+                seconds = seconds - ((hours*3600)+(minutes*60))
+                return render(request, "auctions/auctionlist.html", {
+                "listing": listing,
+                'watchstatus': test(),
+                'commentlist': AuctionComment.objects.filter(auctioncomments=listing),
+                'days': days,
+                'seconds':seconds,
+                'hours': hours,
+                'minutes':minutes,
+                })      
             else:
                 user.userwatchlist.add(listing)
                 watching = True
-                return testrender      
+                days = listing.auctiontimeremaining.days
+                seconds = listing.auctiontimeremaining.seconds
+                hours = seconds//3600
+                minutes = (seconds//60)%60
+                seconds = seconds - ((hours*3600)+(minutes*60))
+                return render(request, "auctions/auctionlist.html", {
+                    "listing": listing,
+                    'watchstatus': test(),
+                    'commentlist': AuctionComment.objects.filter(auctioncomments=listing),
+                    'days': days,
+                    'seconds':seconds,
+                    'hours': hours,
+                    'minutes':minutes,
+                    })      
 
         if request.POST.get('current',False):
             a = int(request.POST["current"])
@@ -125,7 +137,15 @@ def auction_list(request, id):
                 hours = seconds//3600
                 minutes = (seconds//60)%60
                 seconds =  seconds - ((hours*3600)+(minutes*60))
-                return testrender
+                return render(request, "auctions/auctionlist.html", {
+                    "listing": listing,
+                    'watchstatus': test(),
+                    'commentlist': AuctionComment.objects.filter(auctioncomments=listing),
+                    'days': days,
+                    'seconds':seconds,
+                    'hours': hours,
+                    'minutes':minutes,
+                    })
             else:
                 listing.bid.currentBid = a
                 listing.bid.currentuserbid = user
@@ -135,7 +155,15 @@ def auction_list(request, id):
                 hours = seconds//3600
                 minutes = (seconds//60)%60
                 seconds =  seconds - ((hours*3600)+(minutes*60))
-                return testrender
+                return render(request, "auctions/auctionlist.html", {
+                    "listing": listing,
+                    'watchstatus': test(),
+                    'commentlist': AuctionComment.objects.filter(auctioncomments=listing),
+                    'days': days,
+                    'seconds':seconds,
+                    'hours': hours,
+                    'minutes':minutes,
+                    })
 
         if request.POST.get('endlisting',False):
             winner = listing.bid.currentuserbid
@@ -147,9 +175,17 @@ def auction_list(request, id):
         if request.POST.get('comment',False):
             newComment = AuctionComment(comment=request.POST['comment'], auctioncomments = listing, usercommentlist=request.user)
             newComment.save()
+    
     comment = AuctionComment.objects.filter(auctioncomments=listing)
-
-    return testrender
+    return render(request, "auctions/auctionlist.html", {
+        "listing": listing,
+        'watchstatus': test(),
+        'commentlist': AuctionComment.objects.filter(auctioncomments=listing),
+        'days': days,
+        'seconds':seconds,
+        'hours': hours,
+        'minutes':minutes,
+        })
 
 
 
