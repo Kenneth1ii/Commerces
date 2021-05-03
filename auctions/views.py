@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-
+from datetime import datetime , timedelta
 from .models import *
 
 @login_required
@@ -71,6 +71,17 @@ def auction_list(request, id):
     userid = request.user.id
     user = User.objects.get(id=userid)
 
+    def updatetime():
+        listing.save()
+        listing.auctiontimeremaining = listing.auctionendtime - listing.auctionstarttime
+    updatetime()
+
+    days = listing.auctiontimeremaining.days
+    seconds = listing.auctiontimeremaining.seconds
+    hours = seconds//3600
+    minutes = (seconds//60)%60
+    seconds =  seconds - ((hours*3600)+(minutes*60))
+
     watching = listing.userwatch.all().filter(id = userid).exists()
 
     def test():
@@ -80,44 +91,51 @@ def auction_list(request, id):
             return 'Add To Watchlist'
     test()
 
-    
+    testrender = render(request, "auctions/auctionlist.html", {
+    "listing": listing,
+    'watchstatus': test(),
+    'commentlist': AuctionComment.objects.filter(auctioncomments=listing),
+    'days': days,
+    'seconds':seconds,
+    'hours': hours,
+    'minutes':minutes,
+    })
+
     if request.method == 'POST':
         if request.POST.get('addwatch', False):
             if watching:
                 watching = False
                 user.userwatchlist.remove(listing)
-                return render(request, "auctions/auctionlist.html", {
-                    "listing": listing,
-                    'watchstatus': test(),
-                    'commentlist': listing.comments.all()
-                })                
+                days = listing.auctiontimeremaining.days
+                seconds = listing.auctiontimeremaining.seconds
+                hours = seconds//3600
+                minutes = (seconds//60)%60
+                seconds = seconds ((hours*3600)+(minutes*60))
+                return testrender      
             else:
                 user.userwatchlist.add(listing)
                 watching = True
-                return render(request, "auctions/auctionlist.html", {
-                    "listing": listing,
-                    'watchstatus': test(),
-                    'commentlist': listing.comments.all()
-                })          
+                return testrender      
 
         if request.POST.get('current',False):
             a = int(request.POST["current"])
             if a <= listing.bid.currentBid:
-                return render(request, 'auctions/auctionlist.html',{
-                    "listing": listing,
-                    "message": 'Your Current bid does not meet the minimum',
-                    'watchstatus': test(),
-                    'commentlist': listing.comments.all()
-                })
+                days = listing.auctiontimeremaining.days
+                seconds = listing.auctiontimeremaining.seconds
+                hours = seconds//3600
+                minutes = (seconds//60)%60
+                seconds =  seconds - ((hours*3600)+(minutes*60))
+                return testrender
             else:
                 listing.bid.currentBid = a
                 listing.bid.currentuserbid = user
                 listing.bid.save() # save foreign key reference first.
-                return render(request, "auctions/auctionlist.html", {
-                "listing": listing,
-                'watchstatus': test(),
-                'commentlist': listing.comments.all()
-                })
+                days = listing.auctiontimeremaining.days
+                seconds = listing.auctiontimeremaining.seconds
+                hours = seconds//3600
+                minutes = (seconds//60)%60
+                seconds =  seconds - ((hours*3600)+(minutes*60))
+                return testrender
 
         if request.POST.get('endlisting',False):
             winner = listing.bid.currentuserbid
@@ -128,15 +146,10 @@ def auction_list(request, id):
 
         if request.POST.get('comment',False):
             newComment = AuctionComment(comment=request.POST['comment'], auctioncomments = listing, usercommentlist=request.user)
-            newComment.save()    
-
-    
+            newComment.save()
     comment = AuctionComment.objects.filter(auctioncomments=listing)
-    return render(request, "auctions/auctionlist.html", {
-        "listing": listing,
-        'watchstatus': test(),
-        'commentlist': AuctionComment.objects.filter(auctioncomments=listing)
-    })
+
+    return testrender
 
 
 
@@ -158,11 +171,24 @@ def create_list(request):
         user= User.objects.get(id=userid)
         b.owner = user
         b.save()
-        
+
+        auctiontime = request.POST.get('auctionend',False)
+        if auctiontime:
+            starttime = b.auctionstarttime
+            print(starttime)
+            if auctiontime == '48 hrs':
+                endtime = starttime + timedelta(days=2)
+            else:
+                endtime = starttime + timedelta(days=1)
+        b.auctionendtime = endtime
+        print(endtime)
+        b.save()
+
         return HttpResponseRedirect(reverse('auctionlist', args=(b.id,) ))
-    
+
     return render(request, "auctions/createlisting.html",{
         'Categories': Categorylist,
+        'AuctionEnd': AuctionEnd,
     })
 
 def watchlist(request):

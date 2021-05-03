@@ -33,6 +33,13 @@
             {% endfor %}
         </select>
 
+        <select name="auctionend">
+            {% for endtime in AuctionEnd %}
+                <option value="{{endtime}}">{{endtime}}</option>
+            {% endfor %}
+        </select>
+
+
         <input class="btn btn-primary" type="submit">
     </form>
 

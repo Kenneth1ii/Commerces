@@ -18,6 +18,7 @@ class AuctionCategory(models.Model):
     def __str__(self):
         return f"{self.category}"
 
+AuctionEnd = ['48 hrs' ,'24 hrs']
 class AuctionListing(models.Model):
     title = models.CharField(max_length=64)
     description = models.TextField()
@@ -30,6 +31,9 @@ class AuctionListing(models.Model):
     userbought = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="auctionbought",null=True)
     usersold = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="auctionsold",null=True)
     closed = models.BooleanField(default = False)
+    auctionstarttime = models.DateTimeField(auto_now=True)
+    auctionendtime = models.DateTimeField(null=True)
+    auctiontimeremaining = models.DurationField(null=True)
 
     def __str__(self):
         return self.title
