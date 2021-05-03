@@ -1,4 +1,4 @@
-# Commerces EBAY!
+# Commerces website
 
 ## Video Walkthrough
 
