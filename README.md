@@ -1,4 +1,4 @@
-# Commerces website
+# Commerces
 
 ## Video Walkthrough
 
