@@ -1,5 +1,3 @@
-# Commerces
-
 ## Video Walkthrough
 
 Here's a walkthrough of Commerces website
